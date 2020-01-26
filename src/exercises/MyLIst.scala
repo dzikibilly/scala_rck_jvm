@@ -13,9 +13,9 @@ abstract class MyList[+A] {
   // polymorphic call
   override def toString: String = "[" + printElements + "]"
 
-  def map[B](transform: MyTransformer[A,B]): MyList[B]
-  def flatmap[B](mLis: MyTransformer[A,MyList[B]]): MyList[B]
-  def filter(pred: MyPredicat[A]): MyList[A]
+  def map[B](transform: A =>B): MyList[B]
+  def flatmap[B](mLis: A => MyList[B]): MyList[B]
+  def filter(pred: A => Boolean): MyList[A]
   def ++[B >:A](list: MyList[B]): MyList[B]
 
 }
@@ -27,11 +27,11 @@ case object Empty extends MyList[Nothing] {
   def add[B >: Nothing](element: B): MyList[B] = new Cons(element, Empty)
   def printElements: String = ""
 
-  def map[B](transform: MyTransformer[Nothing,B]): MyList[B] = Empty
-  def filter(pred: MyPredicat[Nothing]): MyList[Nothing] = Empty
+  def map[B](transform: Nothing => B): MyList[B] = Empty
+  def filter(pred: Nothing => Boolean): MyList[Nothing] = Empty
 
   def ++[B >: Nothing](list: MyList[B]): MyList[B] = list
-  def flatmap[B](mLis: MyTransformer[Nothing,MyList[B]]): MyList[B] = Empty
+  def flatmap[B](mLis: Nothing => MyList[B]): MyList[B] = Empty
 }
 
 case class Cons[+A](h: A, t: MyList[A]) extends MyList[A] {
@@ -43,26 +43,26 @@ case class Cons[+A](h: A, t: MyList[A]) extends MyList[A] {
     if(t.isEmpty) "" + h
     else h + " " + t.printElements
 
-  def filter(predicate: MyPredicat[A]): MyList[A] = {
-    if (predicate.test(h)) new Cons[A](h, t.filter(predicate))
+  def filter(predicate: A => Boolean): MyList[A] = {
+    if (predicate(h)) new Cons[A](h, t.filter(predicate))
     else t.filter(predicate)
   }
-  def map[B](transform: MyTransformer[A,B]): MyList[B] = {
-    new Cons[B](transform.transform(h), t.map(transform))
+  def map[B](transform: A => B): MyList[B] = {
+    new Cons[B](transform(h), t.map(transform))
   }
 
   def ++[B >: A](list: MyList[B]): MyList[B] = new Cons[B](h, tail ++ list)
 
-  def flatmap[B](mLis: MyTransformer[A,MyList[B]]): MyList[B] = {
-    mLis.transform(h) ++ t.flatmap(mLis)
+  def flatmap[B](mLis: A => MyList[B]): MyList[B] = {
+    mLis(h) ++ t.flatmap(mLis)
   }
 }
 
-trait MyPredicat[-T]{
+trait MyPredicat[-T]{   //zastapione  T => Boolean
   def test(test: T): Boolean
 }
 
-trait MyTransformer[-A, B] {
+trait MyTransformer[-A, B] {    //zastapione A => B
   def transform(obj: A): B
 }
 

@@ -1,5 +1,6 @@
 package exercises
 
+import exercises.caseCLass.Person
 import javafx.scene.control.SplitPane.Divider
 
 object exception extends App{
@@ -50,5 +51,9 @@ object exception extends App{
   }
 
   val pocket = new PocketCalculator(100,-100)
-  pocket.divide(1,0)
+//  pocket.divide(1,0)
+
+  val pr = Person("daniel", 432)
+
+  println(pr.name)
 }
