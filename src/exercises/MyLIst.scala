@@ -78,25 +78,38 @@ object MyList extends App {
   println(listOfStrings.toString)
   println(anotherListOfIntegers.toString)
 
-  val mapowane = anotherListOfIntegers.map(new MyTransformer[Int,Int] {
-    override def transform(obj: Int): Int = obj * 2
-  })
+//  val mapowane = anotherListOfIntegers.map(new Function1[Int,Int] {
+//    override def apply(obj: Int): Int = obj * 2
+//  })
 
-  val predecate = new MyPredicat[Int] {
-    override def test(test: Int): Boolean = test % 2 ==0
-  }
+  val mapowane = anotherListOfIntegers.map( (obj: Int) => obj * 2)
 
-  println(anotherListOfIntegers.filter(new MyPredicat[Int] {
-    override def test(test: Int): Boolean = test % 2 ==0
-  }).toString)
+//  val predecate = new MyPredicat[Int] {
+//    override def test(test: Int): Boolean = test % 2 ==0
+//  }
 
-  println(mapowane.filter(predecate).toString)
+  val predecate = (test: Int) => test % 2
+
+//  println(anotherListOfIntegers.filter(new Function1[Int, Boolean] {
+//    override def apply(test: Int): Boolean = test % 2 ==0
+//  }).toString)
+  println(anotherListOfIntegers.filter( (test: Int) => (test%2 == 0) ).toString)
+
+//  val filterApply = new Function[Int,Boolean] {
+//    override def apply(v1: Int): Boolean = v1 % 4 == 0  }
+
+  val filterApply = (v1: Int) => v1 %4 ==0
+
+  println("Filter to string " + mapowane.filter(filterApply).toString)
 
   val sum = anotherListOfIntegers ++ mapowane
 
   println(sum.toString)
 
-  val forFlatMap = anotherListOfIntegers_2.flatmap(new MyTransformer[Int, MyList[Int]] {
-    override def transform(obj: Int): MyList[Int] = new Cons[Int](obj, new Cons[Int](obj + 1, Empty))
+  val forFlatMap = anotherListOfIntegers_2.flatmap(new Function1[Int, MyList[Int]] {
+    override def apply(obj: Int): MyList[Int] = new Cons[Int](obj, new Cons[Int](obj + 1, Empty))
   })
+
+  val forFlatMap2 = anotherListOfIntegers_2.flatmap( (obj: Int) => new Cons[Int](obj, new Cons[Int](obj + 1, Empty)))
+  val forFlatMap3 = anotherListOfIntegers_2.flatmap( obj => new Cons(obj, new Cons[Int](obj + 1, Empty)))
 }

@@ -26,6 +26,17 @@ object FunctionPrograming extends App{
 //    }
 //  }
 
+    val superAdder: Function1[Int, Function1[Int,Int]] = new Function[Int, Function1[Int,Int]] {
+      override def apply(x: Int): Function1[Int,Int] = new Function[Int,Int] {
+        override def apply(y: Int): Int = x + y
+      }
+    }
 
+    val adder1 = superAdder(5)
+    val adder2 = superAdder
+    println(adder1)
+    println(adder1(3))
+    println(adder1(3))
+    println(adder2(3)(10))
 
 }
